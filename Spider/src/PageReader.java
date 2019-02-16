@@ -9,7 +9,8 @@ import java.io.InputStreamReader;
 
 public class PageReader {
     LinkedList<String> listOfPages = new LinkedList<String>();
-     public void pageReader(String urlString) throws IOException{
+
+     public LinkedList<String> pageReader(String urlString) throws IOException{
 
         URL url;
         try {
@@ -53,10 +54,11 @@ public class PageReader {
 
             }
         }
-        for (int k =0; k < listOfPages.size(); k++){
-            System.out.println(listOfPages.get(k));
-        }
+        //for (int k =0; k < listOfPages.size(); k++){
+          //  System.out.println(listOfPages.get(k));
+        //}
         reader.close();
+         return listOfPages;
     }
 
 }
