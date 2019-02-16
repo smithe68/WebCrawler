@@ -5,10 +5,9 @@
     <content url="file://$MODULE_DIR$">
       <sourceFolder url="file://$MODULE_DIR$/src" isTestSource="false" />
     </content>
-    <content url="file://$MODULE_DIR$/../../htmlunit-2.33/lib" />
+    <content url="file://$MODULE_DIR$/../htmlunit-2.33/lib" />
     <orderEntry type="jdk" jdkName="1.8" jdkType="JavaSDK" />
     <orderEntry type="sourceFolder" forTests="false" />
-    <orderEntry type="library" name="lib" level="project" />
     <orderEntry type="library" exported="" name="HTMLunit" level="project" />
   </component>
 </module>
