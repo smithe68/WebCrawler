@@ -15,9 +15,10 @@ import java.util.concurrent.Executors;
 
 
 public class Spider {
-    ExecutorService executor = Executors.newFixedThreadPool(5);//creating a pool of 5 threads
+    ExecutorService executor = Executors.newFixedThreadPool(10);//creating a pool of 5 threads
     LinkedList<String> newUrls;
     PageReader pageReader = new PageReader();
+    LinkedList<String> visited = new LinkedList<String>();
 
 
    private HashMap<String,Website> WHM = new HashMap<String,Website>();
@@ -28,22 +29,24 @@ public class Spider {
    public void spiderTime(LinkedList<String> url,Spider spider){
 
        for (String i : url) {
-           try {
-               newUrls = pageReader.pageReader(i);
-               Runnable worker = new Workers(newUrls,spider);
-               executor.execute(worker);
-               executor.shutdown();
-               while (!executor.isTerminated()) {   }
-               System.out.println("Finished all threads");
+           System.out.println(i);
+           if(visited.contains(i)){
+               continue;
            }
-           catch (IOException e) {}
+           visited.add(i);
+           Runnable worker = new Workers(i,spider);
+           executor.execute(worker);
+           while (!executor.isTerminated()) {
+               }
+           if (spider.getSize() > 1500) {
+               System.out.print("1500 links found");
+               spider.printWebsiteInfo();
+               System.exit(0);
+           }
 
+               System.out.println("Finished all threads");
        }
-       if (spider.getSize() > 1500) {
-           System.out.print("1500 links found");
-           spider.printWebsiteInfo();
-           System.exit(0);
-       }
+
 
    }
 
