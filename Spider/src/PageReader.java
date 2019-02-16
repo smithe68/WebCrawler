@@ -8,19 +8,21 @@ import java.io.BufferedReader;
 import java.io.InputStreamReader;
 
 public class PageReader {
+    LinkedList<String> listOfPages = new LinkedList<String>();
      public void pageReader(String urlString) throws IOException{
 
-        //String urlString = "https://stackoverflow.com/sitemap.xml";
         URL url;
         try {
             url = new URL(urlString);
         } catch (IOException e) {
+            System.out.println("asd");
             throw new RuntimeException(e);
         }
 
         BufferedReader reader = new BufferedReader(new InputStreamReader(url.openStream()));
 
         String line;
+
         //12
          int counter = 0;
         while ((line = reader.readLine()) != null) {
@@ -29,18 +31,31 @@ public class PageReader {
             counter++;
             //System.out.println(counter);
             for (int i = 0; i < splitLine.length; i++){
-                System.out.println(splitLine[i]);
-                if (splitLine[i].equals("")){
-                    System.out.println("yessir");
+                if (!(splitLine[i].equals(""))){
+                    char c = splitLine[i].charAt(0);
+                    if(c == 104){
+                        //System.out.println(splitLine[i]);
+                        if (splitLine[i].length() > 5) {
+                            String httpsCheck = "";
+                            for (int j = 0; j < 5; j++){
+                                c = splitLine[i].charAt(j);
+                                httpsCheck+=c;
+
+                            }
+                            if (httpsCheck.equals("https")){
+                                listOfPages.add(splitLine[i]);
+                            }
+                        }
+
+                    }
                 }
-//                char c = splitLine[i].charAt(0);
-//                if(c == 104){
-//                    System.out.println("first try baby");
-//                }
+
 
             }
         }
-
+        for (int k =0; k < listOfPages.size(); k++){
+            System.out.println(listOfPages.get(k));
+        }
         reader.close();
     }
 

@@ -10,8 +10,8 @@ import java.io.InputStreamReader;
 public class Main {
     public static void main(String[] args) {
         PageReader read = new PageReader();
-        String startingWebPage = "file:///home/sanderc7/WebCrawler/WebCrawler/TestSite.html";
-        //String startingWebPage = "https://www.youtube.com/";
+        //String startingWebPage = "file:///home/sanderc7/WebCrawler/WebCrawler/TestSite.html";
+        String startingWebPage = "https://www.youtube.com/";
         //String startingWebPage = "https://www.youtube.com/yt/about/press/";
         try{
             read.pageReader(startingWebPage);
