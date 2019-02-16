@@ -16,7 +16,6 @@ public class PageReader {
         try {
             url = new URL(urlString);
         } catch (IOException e) {
-            System.out.println("asd");
             throw new RuntimeException(e);
         }
 
@@ -24,27 +23,41 @@ public class PageReader {
 
         String line;
 
-        //12
-         int counter = 0;
         while ((line = reader.readLine()) != null) {
-            //System.out.println(line);
+
             String[] splitLine = line.split("\"");
-            counter++;
-            //System.out.println(counter);
+
             for (int i = 0; i < splitLine.length; i++){
                 if (!(splitLine[i].equals(""))){
                     char c = splitLine[i].charAt(0);
+
                     if(c == 104){
-                        //System.out.println(splitLine[i]);
-                        if (splitLine[i].length() > 5) {
+                        if (splitLine[i].length() > 8) {
                             String httpsCheck = "";
-                            for (int j = 0; j < 5; j++){
+                            for (int j = 0; j < 8; j++){
                                 c = splitLine[i].charAt(j);
                                 httpsCheck+=c;
-
                             }
-                            if (httpsCheck.equals("https")){
-                                listOfPages.add(splitLine[i]);
+
+                            if (httpsCheck.equals("https://")){
+                                try{
+                                    URL testString = new URL(splitLine[i]);
+                                } catch(Exception e){
+                                    System.out.println("bad url");
+                                    break;
+                                }
+                                String[] putMeBackTogether = splitLine[i].split("/");
+                                String cutAddress = "https://" + putMeBackTogether[2] + "/";
+                                Boolean addMe = true;
+                                for (int l = 0; l < listOfPages.size(); l++){
+
+                                    if (listOfPages.get(l).equals(cutAddress)){
+                                        addMe = false;
+                                    }
+                                }
+                                if(addMe == true){
+                                    listOfPages.add(cutAddress);
+                                }
                             }
                         }
 
@@ -54,9 +67,9 @@ public class PageReader {
 
             }
         }
-        //for (int k =0; k < listOfPages.size(); k++){
-          //  System.out.println(listOfPages.get(k));
-        //}
+        for (int k =0; k < listOfPages.size(); k++){
+            System.out.println(listOfPages.get(k));
+        }
         reader.close();
          return listOfPages;
     }
