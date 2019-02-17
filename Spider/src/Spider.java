@@ -5,7 +5,9 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.ForkJoinPool;
 import java.util.concurrent.ScheduledExecutorService;
+
 
 
 /**
@@ -15,12 +17,12 @@ import java.util.concurrent.ScheduledExecutorService;
 
 
 
-public class Spider {
-    ExecutorService executor = Executors.newFixedThreadPool(64);//creating a pool of 5 threads
-    //ScheduledExecutorService executor= Executors.newScheduledThreadPool(1);
+public class Spider  {
+
     LinkedList<String> newUrls;
     PageReader pageReader = new PageReader();
     LinkedList<String> visited = new LinkedList<String>();
+    ForkJoinPool commonPool = new ForkJoinPool(64);
 
 
    private HashMap<String,Website> WHM = new HashMap<String,Website>();
@@ -38,22 +40,12 @@ public class Spider {
            visited.add(i);
            try {
                newUrls = pageReader.pageReader(i);
-               spiderTime(newUrls ,spider);
-               if (spider.getSize() > 1500) {
-                   System.out.print("15000 links found");
-                   spider.printWebsiteInfo();
-                   System.exit(0);
-               }
+               Workers worker = new Workers(newUrls, spider);
+               commonPool.invoke(worker);
 
            }
            catch(IOException e){}
-           //Runnable worker = new Workers(i, spider);
-           //executor.execute(worker);
-
        }
-       //executor.shutdown();
-
-
    }
 
 
