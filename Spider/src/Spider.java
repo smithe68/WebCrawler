@@ -9,7 +9,8 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ForkJoinPool;
 import java.util.concurrent.ScheduledExecutorService;
-
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 
 
 /**
@@ -17,120 +18,72 @@ import java.util.concurrent.ScheduledExecutorService;
  */
 
 public class Spider  {
-
+    private static HashMap<String,Website> WHM = new HashMap<String,Website>();
     private LinkedList<String> newUrls;
     private PageReader pageReader = new PageReader();
-    private LinkedList<String> visited = new LinkedList<String>();
-    private ForkJoinPool commonPool = new ForkJoinPool(8);
-    private int runCount = 0;
-    private HashMap<String,Website> WHM = new HashMap<String,Website>();
+    private static ForkJoinPool commonPool = new ForkJoinPool(64);
     private Watchman watchman = new Watchman(WHM,visited,newUrls);
     private Thread watchThread = new Thread(watchman);
+    private int runCount = 0;
+    private static LinkedList<String> visited = new LinkedList<String>();
 
-   public int getSize(){
-       return WHM.size();
-   }
+
+
 
     /** web crawler. Given list of URL's, this spider will go to each URL that has not already been visited before, and collect a list of all
      * links at the given web page. It will then check all of those links, recursively.
      */
-   public void spiderTime(LinkedList<String> url,Spider spider){
+   public void spiderTime(LinkedList<String> url,Spider spider) {
+       if(runCount == 0 ) {
+           watchThread.start();
+       }
+       runCount++;
         /*
         this section checks to see if were on are fist run if we are on our first run we start are watchman thread
         and check to see if we have any saved ser files if we do it converts them to the proper objects if not they
         are set to default
          */
-       if(runCount == 0 ){
-           watchThread.start();
-           runCount++;
-           try {
-               FileInputStream fileIn = new FileInputStream("spiderHashMap.ser");
-               ObjectInputStream in = new ObjectInputStream(fileIn);
-               WHM = (HashMap<String, Website>) in.readObject();
-               in.close();
-               fileIn.close();
-           } catch (IOException i) {
-               WHM = new HashMap<String,Website>();
-           } catch (ClassNotFoundException c) {
-               System.out.println("HashMap class not found");
-               c.printStackTrace();
-               return;
-           }
-           try {
-               FileInputStream fileIn = new FileInputStream("visited.ser");
-               ObjectInputStream in = new ObjectInputStream(fileIn);
-               visited = (LinkedList<String>) in.readObject();
-               in.close();
-               fileIn.close();
-           } catch (IOException i) {
-               visited = new LinkedList<String>();
-           } catch (ClassNotFoundException c) {
-               System.out.println("LinkedList class not found");
-               c.printStackTrace();
-               return;
-           }
-           try {
-               FileInputStream fileIn = new FileInputStream("newUrls.ser");
-               ObjectInputStream in = new ObjectInputStream(fileIn);
-               url = (LinkedList<String>) in.readObject();
-               in.close();
-               fileIn.close();
-           } catch (IOException i) {
-               url = new LinkedList<String>();
-               url.add("https://web.archive.org/web/20080916124519/http://www.dmoz.org/");
-           } catch (ClassNotFoundException c) {
-               System.out.println("LinkedList class not found");
-               c.printStackTrace();
-               return;
-           }
-       }
-
        //iterate over list of all new URL's
-       for (String i : url) {
-           System.out.println(i);
-
-           //if visited list contains current URL, increment its index in the has table
-           //and move onto next URL
-           if (visited.contains(i)) {
+       for (int j = 0; j < url.size(); j++) {
+           String i = url.get(j);
+           if (WHM.containsKey(i)) {
                indexHashtable(i);
                continue;
            }
-
-           visited.add(i);
+           System.out.println(i);
            indexHashtable(i);
-
            try {
-
-               //call page reader to get a list of all URL's on the page of the current URL
-               newUrls = pageReader.pageReader(i);
-               //create a worker which will call spiderTime on the list of new URL's
-               Workers worker = new Workers(newUrls,spider);
-
-               //stop the crawler after adding a certain amount of URL's to the hashmap, then print their information
-               watchman.setWHM(WHM);
-               watchman.setVisited(visited);
-               watchman.setNewUrls(newUrls);
-               commonPool.invoke(worker);
-
-
+                newUrls = pageReader.pageReader(i);
            }
            catch(IOException e){}
+
+           Workers worker = new Workers(newUrls, spider);
+
+           watchman.setWHM(WHM);
+           watchman.setVisited(visited);
+           watchman.setNewUrls(newUrls);
+
+           commonPool.invoke(worker);
+           commonPool.shutdown();
        }
    }
+           //stop the crawler after adding a certain amount of URL's to the hashmap, then print their information
+           //if visited list contains current URL, increment its index in the has table
+           //and move onto next URL
 
    /** Takes a URL as a string and indexes into the hash map. If element already exists in hashmap, the increment its inLink counter**/
+
    public void indexHashtable(String websiteName){
 
-            if(!(WHM.containsKey(websiteName))){
-                Website newWebsite = new Website();
-                newWebsite.setName(websiteName);
-                WHM.put(websiteName,newWebsite);
-            }
-            else{
-                WHM.get(websiteName).incrimentInlink();
-            }
-    }
-
+       if(!(WHM.containsKey(websiteName))){
+           Website newWebsite = new Website();
+           newWebsite.setName(websiteName);
+           WHM.put(websiteName,newWebsite);
+       }
+       else{
+           WHM.get(websiteName).incrimentInlink();
+       }
+   }
     /** Prints info of each web page from the URL's in hash map**/
     public void printWebsiteInfo(){
 
@@ -140,4 +93,9 @@ public class Spider  {
 
         }
     }
+    public int getSize(){
+        return WHM.size();
+    }
 }
+
+

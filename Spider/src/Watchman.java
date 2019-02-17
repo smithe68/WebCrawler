@@ -28,8 +28,10 @@ public class Watchman implements Runnable{
         a numerical representation of an  object which is saved in a file.
          */
         while(true) {
-            if (hashmap.size() > size) {
-                size = size * (hashmap.size()/20 * 2);
+            try {
+                sleep(60000);
+            }catch(InterruptedException e){}
+
                 System.out.println("seralizing");
                 try {
                     FileOutputStream fileOut =
@@ -65,10 +67,7 @@ public class Watchman implements Runnable{
                 } catch (IOException i) {
                     i.printStackTrace();
                 }
-            }
-            try {
-                sleep(2000);
-            }catch(InterruptedException e){}
+
         }
     }
 
