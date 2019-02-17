@@ -17,7 +17,7 @@ public class Workers extends RecursiveAction{
         this.spider = spider;
     }
     public void compute(){
-        spider.spiderTime(newUrls, spider);
+        spider.spiderTime(newUrls,spider);
 
 
     }

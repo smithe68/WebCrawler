@@ -10,17 +10,10 @@ public class Main {
     public static void main(String[] args) {
         PageReader read = new PageReader();
         Spider spider = new Spider();
-       LinkedList<String> testList = new LinkedList<String>();
-//
-//
-//        Spider spider = new Spider();
-//        spider.spiderTime(testList,spider);
-        //String testString = "https://en.wikipedia.org/wiki/RuneScape";
+        KevinBacon kev = new KevinBacon();
+        LinkedList<String> testList = new LinkedList<String>();
         testList.add("https://web.archive.org/web/20080916124519/http://www.dmoz.org/");
-
-        //String testString = "https://www.youtube.com";
-
-            spider.spiderTime(testList,spider);
-
+        //spider.spiderTime(testList,spider);
+        kev.kevinBacon("https://www.reddit.com/","https://www.wikipedia.org/");
     }
 }

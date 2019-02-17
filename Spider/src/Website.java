@@ -3,7 +3,7 @@
  */
 public class Website {
     private String name = "";
-    private int inLinks = 1;
+    private int inLinks = 1; //number of pages which contain a link to this website
     private int outLinks = 0;
 
     public String getName() {
