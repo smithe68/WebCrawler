@@ -47,6 +47,14 @@ public class PageReader {
                                     break;
                                 }
                                 String[] putMeBackTogether = splitLine[i].split("/");
+                                String[] checkForBogus = putMeBackTogether[2].split("\\.");
+                                //System.out.println(putMeBackTogether[2]);
+                                for(int q=0; q < checkForBogus.length; q++){
+
+                                    System.out.println(checkForBogus[q]);
+                                }
+
+
                                 String cutAddress = "https://" + putMeBackTogether[2] + "/";
                                 Boolean addMe = true;
                                 for (int l = 0; l < listOfPages.size(); l++){
@@ -67,9 +75,7 @@ public class PageReader {
 
             }
         }
-        //for (int k =0; k < listOfPages.size(); k++){
-          //  System.out.println(listOfPages.get(k));
-        //}
+
         reader.close();
          return listOfPages;
     }

@@ -33,15 +33,24 @@ public class Spider  {
    public void spiderTime(LinkedList<String> url,Spider spider){
 
        for (String i : url) {
-           System.out.println(i);
+           //System.out.println(i);
            if (visited.contains(i)) {
+               indexHashtable(i);
                continue;
            }
            visited.add(i);
+           indexHashtable(i);
+
            try {
                newUrls = pageReader.pageReader(i);
                Workers worker = new Workers(newUrls, spider);
+               if(WHM.size()>100){
+                   printWebsiteInfo();
+                   System.exit(0);
+
+               }
                commonPool.invoke(worker);
+
 
            }
            catch(IOException e){}
@@ -49,7 +58,7 @@ public class Spider  {
    }
 
 
-   public void indexHastable(String websiteName){
+   public void indexHashtable(String websiteName){
 
             if(!(WHM.containsKey(websiteName))){
                 Website newWebsite = new Website();
@@ -57,8 +66,7 @@ public class Spider  {
                 WHM.put(websiteName,newWebsite);
             }
             else{
-               Website foundWP =  WHM.get(websiteName);
-               foundWP.incrimentInlink();
+                WHM.get(websiteName).incrimentInlink();
             }
     }
 
@@ -67,7 +75,7 @@ public class Spider  {
         for (Website i : WHM.values()) {
             System.out.println("Website Name: " + i.getName());
             System.out.println("Website inLinks: " + i.getInLinks());
-            System.out.println("Website outLinks: " + i.getOutLinks());
+
         }
     }
 }

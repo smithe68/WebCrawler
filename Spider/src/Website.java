@@ -19,14 +19,7 @@ public class Website {
     }
 
     public void incrimentInlink() {
-        this.inLinks = inLinks++;
+        this.inLinks++;
     }
 
-    public int getOutLinks() {
-        return outLinks;
-    }
-
-    public void setOutLinks(int outLinks) {
-        this.outLinks = outLinks;
-    }
 }

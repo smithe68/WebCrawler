@@ -6,6 +6,7 @@ import java.util.*;
 import java.io.IOException;
 
 public class Main {
+
     public static void main(String[] args) {
         PageReader read = new PageReader();
         Spider spider = new Spider();
@@ -18,6 +19,7 @@ public class Main {
         testList.add("https://web.archive.org/web/20080916124519/http://www.dmoz.org/");
 
         //String testString = "https://www.youtube.com";
+
             spider.spiderTime(testList,spider);
 
     }
