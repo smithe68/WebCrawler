@@ -5,17 +5,16 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.util.HashMap;
 import java.util.LinkedList;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.concurrent.ForkJoinPool;
-
+import java.util.concurrent.ScheduledExecutorService;
 
 
 
 /**
  * Created by smithe68 on 2/16/19.
  */
-
-
-
 
 public class Spider  {
 
@@ -32,6 +31,9 @@ public class Spider  {
        return WHM.size();
    }
 
+    /** web crawler. Given list of URL's, this spider will go to each URL that has not already been visited before, and collect a list of all
+     * links at the given web page. It will then check all of those links, recursively.
+     */
    public void spiderTime(LinkedList<String> url,Spider spider){
         /*
         this section checks to see if were on are fist run if we are on our first run we start are watchman thread
@@ -83,21 +85,28 @@ public class Spider  {
            }
        }
 
+       //iterate over list of all new URL's
        for (String i : url) {
-           System.out.println(i);
-           //System.out.println(i);
 
+           //if visited list contains current URL, increment its index in the has table
+           //and move onto next URL
            if (visited.contains(i)) {
                indexHashtable(i);
                continue;
            }
+
            visited.add(i);
            indexHashtable(i);
 
            try {
+
+               //call page reader to get a list of all URL's on the page of the current URL
                newUrls = pageReader.pageReader(i);
-               Workers worker = new Workers(newUrls, spider);
-               if(WHM.size()>100){
+               //create a worker which will call spiderTime on the list of new URL's
+               Workers worker = new Workers(newUrls,spider);
+
+               //stop the crawler after adding a certain amount of URL's to the hashmap, then print their information
+               if(WHM.size()>1000){
                    printWebsiteInfo();
                    System.exit(0);
 
@@ -108,13 +117,12 @@ public class Spider  {
                commonPool.invoke(worker);
 
 
-
            }
            catch(IOException e){}
        }
    }
 
-
+   /** Takes a URL as a string and indexes into the hash map. If element already exists in hashmap, the increment its inLink counter**/
    public void indexHashtable(String websiteName){
 
             if(!(WHM.containsKey(websiteName))){
@@ -127,6 +135,7 @@ public class Spider  {
             }
     }
 
+    /** Prints info of each web page from the URL's in hash map**/
     public void printWebsiteInfo(){
 
         for (Website i : WHM.values()) {
