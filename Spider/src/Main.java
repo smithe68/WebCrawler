@@ -13,7 +13,7 @@ public class Main {
         KevinBacon kev = new KevinBacon();
         LinkedList<String> testList = new LinkedList<String>();
         testList.add("https://web.archive.org/web/20080916124519/http://www.dmoz.org/");
-        //spider.spiderTime(testList,spider);
+        spider.spiderTime(testList,spider);
         kev.kevinBacon("https://www.reddit.com/","https://www.wikipedia.org/");
     }
 }

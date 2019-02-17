@@ -11,7 +11,7 @@ import static java.lang.Thread.sleep;
  */
 public class Watchman implements Runnable{
     HashMap hashmap;
-    int size = 150;
+    int size = 100 ;
     LinkedList<String> visited;
     private LinkedList<String> newUrls;
     public Watchman(HashMap WHM, LinkedList<String> visited,LinkedList<String>newUrls){
@@ -29,6 +29,7 @@ public class Watchman implements Runnable{
          */
         while(true) {
             if (hashmap.size() > size) {
+                size = size * (hashmap.size()/20 * 2);
                 System.out.println("seralizing");
                 try {
                     FileOutputStream fileOut =

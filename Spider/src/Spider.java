@@ -87,6 +87,7 @@ public class Spider  {
 
        //iterate over list of all new URL's
        for (String i : url) {
+           System.out.println(i);
 
            //if visited list contains current URL, increment its index in the has table
            //and move onto next URL
@@ -106,11 +107,6 @@ public class Spider  {
                Workers worker = new Workers(newUrls,spider);
 
                //stop the crawler after adding a certain amount of URL's to the hashmap, then print their information
-               if(WHM.size()>1000){
-                   printWebsiteInfo();
-                   System.exit(0);
-
-               }
                watchman.setWHM(WHM);
                watchman.setVisited(visited);
                watchman.setNewUrls(newUrls);
