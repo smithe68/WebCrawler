@@ -16,10 +16,10 @@ public class Main {
         reader.close();
             PageReader read = new PageReader();
             Spider spider = new Spider();
-            KevinBacon kev = new KevinBacon();
+            //KevinBacon kev = new KevinBacon();
             LinkedList<String> testList = new LinkedList<String>();
             testList.add("https://www.seattletimes.com/");
             spider.spiderTime(testList,spider,string);
-            kev.kevinBacon("https://www.reddit.com/","https://www.wikipedia.org/");
+            //kev.kevinBacon("https://www.reddit.com/","https://www.wikipedia.org/");
     }
 }

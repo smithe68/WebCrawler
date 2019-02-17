@@ -89,7 +89,7 @@ public class Spider  {
    public void indexHashtable(String websiteName){
 
        if(!(WHM.containsKey(websiteName))){
-           Website newWebsite = new Website();
+           Website newWebsite = new Website(websiteName);
            newWebsite.setName(websiteName);
            WHM.put(websiteName,newWebsite);
        }
