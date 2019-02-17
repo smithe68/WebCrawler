@@ -51,7 +51,7 @@ public class PageReader {
                                 //System.out.println(putMeBackTogether[2]);
                                 for(int q=0; q < checkForBogus.length; q++){
 
-                                    System.out.println(checkForBogus[q]);
+                                   // System.out.println(checkForBogus[q]);
                                 }
 
 

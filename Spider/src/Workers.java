@@ -1,11 +1,10 @@
-import java.io.IOException;
+
 import java.util.LinkedList;
 import java.util.concurrent.RecursiveAction;
 
 /**
  * Created by smithe68 on 2/16/19.
  */
-
 public class Workers extends RecursiveAction{
     private static int count = 0;
     PageReader pageReader = new PageReader();

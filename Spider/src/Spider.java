@@ -1,12 +1,12 @@
 import sun.awt.image.ImageWatched;
 
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.ObjectInputStream;
 import java.util.HashMap;
 import java.util.LinkedList;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 import java.util.concurrent.ForkJoinPool;
-import java.util.concurrent.ScheduledExecutorService;
+
 
 
 
@@ -19,21 +19,74 @@ import java.util.concurrent.ScheduledExecutorService;
 
 public class Spider  {
 
-    LinkedList<String> newUrls;
-    PageReader pageReader = new PageReader();
-    LinkedList<String> visited = new LinkedList<String>();
-    ForkJoinPool commonPool = new ForkJoinPool(64);
+    private LinkedList<String> newUrls;
+    private PageReader pageReader = new PageReader();
+    private LinkedList<String> visited = new LinkedList<String>();
+    private ForkJoinPool commonPool = new ForkJoinPool(8);
+    private int runCount = 0;
+    private HashMap<String,Website> WHM = new HashMap<String,Website>();
+    private Watchman watchman = new Watchman(WHM,visited,newUrls);
+    private Thread watchThread = new Thread(watchman);
 
-
-   private HashMap<String,Website> WHM = new HashMap<String,Website>();
    public int getSize(){
        return WHM.size();
    }
 
    public void spiderTime(LinkedList<String> url,Spider spider){
+        /*
+        this section checks to see if were on are fist run if we are on our first run we start are watchman thread
+        and check to see if we have any saved ser files if we do it converts them to the proper objects if not they
+        are set to default
+         */
+       if(runCount == 0 ){
+           watchThread.start();
+           runCount++;
+           try {
+               FileInputStream fileIn = new FileInputStream("spiderHashMap.ser");
+               ObjectInputStream in = new ObjectInputStream(fileIn);
+               WHM = (HashMap<String, Website>) in.readObject();
+               in.close();
+               fileIn.close();
+           } catch (IOException i) {
+               WHM = new HashMap<String,Website>();
+           } catch (ClassNotFoundException c) {
+               System.out.println("HashMap class not found");
+               c.printStackTrace();
+               return;
+           }
+           try {
+               FileInputStream fileIn = new FileInputStream("visited.ser");
+               ObjectInputStream in = new ObjectInputStream(fileIn);
+               visited = (LinkedList<String>) in.readObject();
+               in.close();
+               fileIn.close();
+           } catch (IOException i) {
+               visited = new LinkedList<String>();
+           } catch (ClassNotFoundException c) {
+               System.out.println("LinkedList class not found");
+               c.printStackTrace();
+               return;
+           }
+           try {
+               FileInputStream fileIn = new FileInputStream("newUrls.ser");
+               ObjectInputStream in = new ObjectInputStream(fileIn);
+               url = (LinkedList<String>) in.readObject();
+               in.close();
+               fileIn.close();
+           } catch (IOException i) {
+               url = new LinkedList<String>();
+               url.add("https://web.archive.org/web/20080916124519/http://www.dmoz.org/");
+           } catch (ClassNotFoundException c) {
+               System.out.println("LinkedList class not found");
+               c.printStackTrace();
+               return;
+           }
+       }
 
        for (String i : url) {
+           System.out.println(i);
            //System.out.println(i);
+
            if (visited.contains(i)) {
                indexHashtable(i);
                continue;
@@ -49,7 +102,11 @@ public class Spider  {
                    System.exit(0);
 
                }
+               watchman.setWHM(WHM);
+               watchman.setVisited(visited);
+               watchman.setNewUrls(newUrls);
                commonPool.invoke(worker);
+
 
 
            }

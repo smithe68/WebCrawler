@@ -1,7 +1,9 @@
+import java.io.Serializable;
+
 /**
  * Created by smithe68 on 2/16/19.
  */
-public class Website {
+public class Website implements Serializable{
     private String name = "";
     private int inLinks = 1;
     private int outLinks = 0;
