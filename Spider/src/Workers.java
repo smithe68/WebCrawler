@@ -16,15 +16,18 @@ public class Workers extends RecursiveAction {
     PageReader pageReader = new PageReader();
 
     Spider spider;
+    String search;
 
-    public Workers(LinkedList url, Spider spider) {
+    public Workers(LinkedList url, Spider spider,String search) {
         this.url = url;
         this.spider = spider;
+        this.search = search;
     }
 
     public void compute() {
         //call page reader to get a list of all URL's on the page of the current URL
-        spider.spiderTime(url, spider);
+        spider.spiderTime(url, spider,search);
+
         //create a worker which will call spiderTime on the list of new URL's
     }
 

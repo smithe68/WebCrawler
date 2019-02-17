@@ -18,10 +18,10 @@ import java.util.concurrent.locks.ReentrantLock;
  */
 
 public class Spider  {
-    private static HashMap<String,Website> WHM = new HashMap<String,Website>();
+    public static HashMap<String,Website> WHM = new HashMap<String,Website>();
     private LinkedList<String> newUrls;
     private PageReader pageReader = new PageReader();
-    private static ForkJoinPool commonPool = new ForkJoinPool(64);
+    private static ForkJoinPool commonPool = new ForkJoinPool();
     private Watchman watchman = new Watchman(WHM,visited,newUrls);
     private Thread watchThread = new Thread(watchman);
     private int runCount = 0;
@@ -33,7 +33,7 @@ public class Spider  {
     /** web crawler. Given list of URL's, this spider will go to each URL that has not already been visited before, and collect a list of all
      * links at the given web page. It will then check all of those links, recursively.
      */
-   public void spiderTime(LinkedList<String> url,Spider spider) {
+   public void spiderTime(LinkedList<String> url,Spider spider,String search) {
        if(runCount == 0 ) {
            watchThread.start();
        }
@@ -44,27 +44,40 @@ public class Spider  {
         are set to default
          */
        //iterate over list of all new URL's
+       if(url.size()==0){
+           System.out.println("no more links");
+       }
        for (int j = 0; j < url.size(); j++) {
+
            String i = url.get(j);
+
            if (WHM.containsKey(i)) {
                indexHashtable(i);
                continue;
            }
-           System.out.println(i);
-           indexHashtable(i);
            try {
-                newUrls = pageReader.pageReader(i);
+               if (pageReader.contains(i, search)) {
+                   System.out.println("---------- "+i + " ---------------");
+               }
+           }catch (IOException e){
+
            }
-           catch(IOException e){}
 
-           Workers worker = new Workers(newUrls, spider);
+           indexHashtable(i);
 
-           watchman.setWHM(WHM);
-           watchman.setVisited(visited);
-           watchman.setNewUrls(newUrls);
+           try {
+               newUrls = pageReader.pageReader(i);
+               Workers worker = new Workers(newUrls, spider,search);
+               watchman.setWHM(WHM);
+               watchman.setVisited(visited);
+               watchman.setNewUrls(newUrls);
+               commonPool.invoke(worker);
+           }
+           catch(IOException e){
+               continue;
+           }
 
-           commonPool.invoke(worker);
-           commonPool.shutdown();
+
        }
    }
            //stop the crawler after adding a certain amount of URL's to the hashmap, then print their information
