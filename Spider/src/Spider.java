@@ -29,7 +29,9 @@ public class Spider  {
 
 
 
-
+    public HashMap<String, Website> getHashMap(){
+        return WHM;
+    }
     /** web crawler. Given list of URL's, this spider will go to each URL that has not already been visited before, and collect a list of all
      * links at the given web page. It will then check all of those links, recursively.
      */
@@ -38,6 +40,7 @@ public class Spider  {
            watchThread.start();
        }
        runCount++;
+       System.out.println(runCount);
         /*
         this section checks to see if were on are fist run if we are on our first run we start are watchman thread
         and check to see if we have any saved ser files if we do it converts them to the proper objects if not they
@@ -52,6 +55,10 @@ public class Spider  {
            }
            System.out.println(i);
            indexHashtable(i);
+           for (int z = 0; z < url.size(); z++){
+               WHM.get(i).addToLinkedList(new Website(url.get(z)));
+
+           }
            try {
                 newUrls = pageReader.pageReader(i);
            }
@@ -62,7 +69,9 @@ public class Spider  {
            watchman.setWHM(WHM);
            watchman.setVisited(visited);
            watchman.setNewUrls(newUrls);
-
+            if (runCount >=500){
+                return;
+            }
            commonPool.invoke(worker);
            commonPool.shutdown();
        }
@@ -76,7 +85,7 @@ public class Spider  {
    public void indexHashtable(String websiteName){
 
        if(!(WHM.containsKey(websiteName))){
-           Website newWebsite = new Website();
+           Website newWebsite = new Website(websiteName);
            newWebsite.setName(websiteName);
            WHM.put(websiteName,newWebsite);
        }

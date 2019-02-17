@@ -14,12 +14,13 @@ public class Workers extends RecursiveAction {
 
     private static int count = 0;
     PageReader pageReader = new PageReader();
-
+    int countMeIn;
     Spider spider;
 
     public Workers(LinkedList url, Spider spider) {
         this.url = url;
         this.spider = spider;
+        this.countMeIn = count;
     }
 
     public void compute() {
