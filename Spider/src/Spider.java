@@ -29,10 +29,69 @@ public class Spider  {
 
 
 
-
+    public HashMap<String, Website> getHashMap(){
+        return WHM;
+    }
     /** web crawler. Given list of URL's, this spider will go to each URL that has not already been visited before, and collect a list of all
      * links at the given web page. It will then check all of those links, recursively.
      */
+
+
+
+
+
+
+
+
+    public void spiderTimeForBacon(LinkedList<String> url,Spider spider) {
+        if(runCount == 0 ) {
+            watchThread.start();
+        }
+        runCount++;
+        System.out.println(runCount);
+        /*
+        this section checks to see if were on are fist run if we are on our first run we start are watchman thread
+        and check to see if we have any saved ser files if we do it converts them to the proper objects if not they
+        are set to default
+         */
+        //iterate over list of all new URL's
+        for (int j = 0; j < url.size(); j++) {
+            String i = url.get(j);
+            if (WHM.containsKey(i)) {
+                indexHashtable(i);
+                continue;
+            }
+            System.out.println(i);
+            indexHashtable(i);
+            for (int z = 0; z < url.size(); z++){
+                WHM.get(i).addToLinkedList(new Website(url.get(z)));
+
+            }
+            try {
+                newUrls = pageReader.pageReader(i);
+            }
+            catch(IOException e){}
+
+            BaconWorkers baconWorker = new BaconWorkers(newUrls, spider);
+
+            watchman.setWHM(WHM);
+            watchman.setVisited(visited);
+            watchman.setNewUrls(newUrls);
+            if (runCount >=20){
+                return;
+            }
+            commonPool.invoke(baconWorker);
+            commonPool.shutdown();
+        }
+    }
+
+
+
+
+
+
+
+
    public void spiderTime(LinkedList<String> url,Spider spider,String search) {
        if(runCount == 0 ) {
            watchThread.start();
@@ -46,6 +105,7 @@ public class Spider  {
        //iterate over list of all new URL's
        if(url.size()==0){
            System.out.println("no more links");
+           //System.exit(0);
        }
        for (int j = 0; j < url.size(); j++) {
 
@@ -96,6 +156,11 @@ public class Spider  {
        else{
            WHM.get(websiteName).incrimentInlink();
        }
+   }
+
+   public Website returnHashIndex(String websitename){
+      return WHM.get(websitename);
+
    }
     /** Prints info of each web page from the URL's in hash map**/
     public void printWebsiteInfo(){

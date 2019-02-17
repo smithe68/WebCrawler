@@ -11,6 +11,12 @@ public class Website implements Serializable {
         private String name = "";
         private int inLinks = 1; //number of pages which contain a link to this website
         private LinkedList<Website> adjacentPages = new LinkedList<Website>();
+        public void setDistance(Integer dist){
+            this.distance = dist;
+        }
+        public int getDistance(){
+            return distance;
+        }
         public Boolean getVisited(){
             return visited;
         }
