@@ -18,6 +18,7 @@ public class Workers implements Runnable{
     }
     public void run(){
             try {
+                System.out.println(count);
                 newUrls = pageReader.pageReader(newUrl);
                 spider.indexHastable(newUrl);
                 count++;

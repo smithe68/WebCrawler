@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
 
 
 /**
@@ -15,7 +16,8 @@ import java.util.concurrent.Executors;
 
 
 public class Spider {
-    ExecutorService executor = Executors.newFixedThreadPool(10);//creating a pool of 5 threads
+    ExecutorService executor = Executors.newFixedThreadPool(64);//creating a pool of 5 threads
+    //ScheduledExecutorService executor= Executors.newScheduledThreadPool(1);
     LinkedList<String> newUrls;
     PageReader pageReader = new PageReader();
     LinkedList<String> visited = new LinkedList<String>();
@@ -30,22 +32,26 @@ public class Spider {
 
        for (String i : url) {
            System.out.println(i);
-           if(visited.contains(i)){
+           if (visited.contains(i)) {
                continue;
            }
            visited.add(i);
-           Runnable worker = new Workers(i,spider);
-           executor.execute(worker);
-           while (!executor.isTerminated()) {
+           try {
+               newUrls = pageReader.pageReader(i);
+               spiderTime(newUrls ,spider);
+               if (spider.getSize() > 1500) {
+                   System.out.print("15000 links found");
+                   spider.printWebsiteInfo();
+                   System.exit(0);
                }
-           if (spider.getSize() > 1500) {
-               System.out.print("1500 links found");
-               spider.printWebsiteInfo();
-               System.exit(0);
-           }
 
-               System.out.println("Finished all threads");
+           }
+           catch(IOException e){}
+           //Runnable worker = new Workers(i, spider);
+           //executor.execute(worker);
+
        }
+       //executor.shutdown();
 
 
    }

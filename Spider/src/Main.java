@@ -15,7 +15,7 @@ public class Main {
 //        Spider spider = new Spider();
 //        spider.spiderTime(testList,spider);
         //String testString = "https://en.wikipedia.org/wiki/RuneScape";
-        testList.add("https://www.callicoder.com/java-executor-service-and-thread-pool-tutorial/");
+        testList.add("https://web.archive.org/web/20080916124519/http://www.dmoz.org/");
 
         //String testString = "https://www.youtube.com";
             spider.spiderTime(testList,spider);

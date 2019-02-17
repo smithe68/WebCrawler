@@ -67,9 +67,9 @@ public class PageReader {
 
             }
         }
-        for (int k =0; k < listOfPages.size(); k++){
-            System.out.println(listOfPages.get(k));
-        }
+        //for (int k =0; k < listOfPages.size(); k++){
+          //  System.out.println(listOfPages.get(k));
+        //}
         reader.close();
          return listOfPages;
     }
